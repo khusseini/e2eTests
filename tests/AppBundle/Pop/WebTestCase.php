@@ -11,7 +11,7 @@ class WebTestCase extends SfTests\WebTestCase
 
     public static function createPopClient()
     {
-        return static::createClient();
+        return static::getClient();
     }
 
     protected static function getPage($pageName)
@@ -41,7 +41,9 @@ class WebTestCase extends SfTests\WebTestCase
     public static function getContainer()
     {
         if (!self::$container) {
-            self::$container = self::createClient()->getContainer();
+            if (!self::$container = self::getClient()->getContainer()) {
+                self::$container = self::createClient()->getContainer();
+            }
         }
         return self::$container;
     }
