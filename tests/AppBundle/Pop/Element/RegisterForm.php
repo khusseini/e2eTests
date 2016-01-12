@@ -6,7 +6,7 @@ use SensioLabs\Behat\PageObjectExtension\PageObject\Element;
 
 class RegisterForm extends Element
 {
-    protected $selector = '#form';
+    protected $selector = 'form';
 
     public function register(
         $username = '',
@@ -19,7 +19,7 @@ class RegisterForm extends Element
         $this->fillField('form_username', $username);
         $this->fillField('form_email', $email);
         $this->fillField('form_password', $password);
-        $this->fillField('form_password_repeat', $passwordRepeat);
+        $this->fillField('form_repeat_password', $passwordRepeat);
         $this->fillField('form_accept_terms_of_use', $acceptTermsOfUse);
 
         return $this;

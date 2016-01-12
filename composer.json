@@ -32,7 +32,10 @@
         "sensio/generator-bundle": "*",
         "symfony/phpunit-bridge": "*",
         "behat/behat": "^3.0",
-        "sensiolabs/behat-page-object-extension": "dev-master"
+        "sensiolabs/behat-page-object-extension": "dev-master",
+        "behat/mink-browserkit-driver": "^1.3",
+        "behat/mink-selenium2-driver": "^1.3",
+        "behat/mink-goutte-driver": "^1.2"
     },
     "scripts": {
         "post-install-cmd": [

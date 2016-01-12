@@ -1,0 +1,76 @@
+<?xml version="1.0" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <parameters>
+        <parameter key="sensio_labs.page_object_extension.namespaces.page" type="collection">
+            <parameter>Tests\AppBundle\Pop\Page</parameter>
+        </parameter>
+        <parameter key="sensio_labs.page_object_extension.namespaces.element" type="collection">
+            <parameter>Tests\AppBundle\Pop\Element</parameter>
+        </parameter>
+        <parameter key="mink.parameters" type="collection">
+            <parameter key="base_url">http://localhost:8000</parameter>
+            <parameter key="mink_loader"/>
+            <parameter key="files_path" />
+            <parameter key="show_auto" />
+            <parameter key="show_cmd" />
+            <parameter key="show_tmp_dir">/tmp</parameter>
+            <parameter key="default_session">default</parameter>
+            <parameter key="browser_name">firefox</parameter>
+        </parameter>
+        <parameter key="sensio_labs.page_object_extension.page_factory.page_parameters">%mink.parameters%</parameter>
+        <parameter key="sensio_labs.page_object_extension.page_factory.default.class">SensioLabs\Behat\PageObjectExtension\PageObject\Factory\DefaultFactory</parameter>
+        <parameter key="sensio_labs.page_object_extension.class_name_resolver.camelcased.class">SensioLabs\Behat\PageObjectExtension\PageObject\Factory\CamelcasedClassNameResolver</parameter>
+        <parameter key="sensio_labs.page_object_extension.context.initializer.class">SensioLabs\Behat\PageObjectExtension\Context\Initializer\PageObjectAwareInitializer</parameter>
+        <parameter key="sensio_labs.page_object_extension.context.argument_resolver.page_object.class">SensioLabs\Behat\PageObjectExtension\Context\Argument\PageObjectArgumentResolver</parameter>
+    </parameters>
+
+    <services>
+
+        <service id="mink.client" class="Symfony\Component\BrowserKit\Client">
+            <factory class="Tests\AppBundle\Pop\WebTestCase" method="createPopClient"/>
+        </service>
+
+        <service id="mink.driver" class="Behat\Mink\Driver\BrowserKitDriver">
+            <argument type="service" id="mink.client" />
+        </service>
+
+        <service id="mink.session" class="Behat\Mink\Session">
+            <argument type="service" id="mink.driver" />
+        </service>
+
+        <service id="mink" class="Behat\Mink\Mink">
+            <argument type="collection">
+                <argument type="service" key="default" id="mink.session" />
+            </argument>
+            <call method="setDefaultSessionName">
+                <argument type="string">default</argument>
+            </call>
+        </service>
+
+        <service id="sensio_labs.page_object_extension.class_name_resolver.camelcased" class="%sensio_labs.page_object_extension.class_name_resolver.camelcased.class%">
+            <argument>%sensio_labs.page_object_extension.namespaces.page%</argument>
+            <argument>%sensio_labs.page_object_extension.namespaces.element%</argument>
+        </service>
+
+        <service id="pop.factory" alias="sensio_labs.page_object_extension.page_factory.default" />
+        <service id="sensio_labs.page_object_extension.class_name_resolver" alias="sensio_labs.page_object_extension.class_name_resolver.camelcased" />
+
+        <service id="sensio_labs.page_object_extension.page_factory.lazy" class="SensioLabs\Behat\PageObjectExtension\PageObject\Factory\LazyFactory" public="false">
+            <argument type="service" id="sensio_labs.page_object_extension.page_factory" />
+            <argument type="service">
+                <service class="ProxyManager\Factory\LazyLoadingValueHolderFactory" />
+            </argument>
+        </service>
+
+        <service id="sensio_labs.page_object_extension.page_factory.default" class="%sensio_labs.page_object_extension.page_factory.default.class%" public="false">
+            <argument type="service" id="mink" />
+            <argument type="service" id="sensio_labs.page_object_extension.class_name_resolver" />
+            <argument>%sensio_labs.page_object_extension.page_factory.page_parameters%</argument>
+        </service>
+
+        <service id="sensio_labs.page_object_extension.page_factory" alias="sensio_labs.page_object_extension.page_factory.default" />
+    </services>
+</container>
